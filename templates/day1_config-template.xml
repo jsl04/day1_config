@@ -1,0 +1,90 @@
+<config-template xmlns="http://tail-f.com/ns/config/1.0">
+  <devices xmlns="http://tail-f.com/ns/ncs">
+    <device>
+                 <name>{/deviceconfig/device}</name>
+                 <config>
+                 <hostname xmlns="http://tail-f.com/ned/cisco-ios-xr">{/deviceconfig/hostname}</hostname>
+                   <logging xmlns="http://tail-f.com/ned/cisco-ios-xr">
+                     <console>debugging</console>
+                   </logging>
+                   <domain xmlns="http://tail-f.com/ned/cisco-ios-xr">
+                     <name-server>
+                       <address>{/dns}</address>
+                     </name-server>
+                   </domain>
+                   <ntp xmlns="http://tail-f.com/ned/cisco-ios-xr">
+                     <server>
+                       <server-list>
+                         <name>{/ntp}</name>
+                       </server-list>
+                     </server>
+                   </ntp>
+                   <snmp-server xmlns="http://tail-f.com/ned/cisco-ios-xr">
+                     <community>
+                       <name>default</name>
+                       <type>clear</type>
+                       <RW/>
+                     </community>
+                     <view>
+                       <view-name>default</view-name>
+                       <oid-list>
+                         <oid-tree>1.3.6.1.2.1.1.5</oid-tree>
+                         <viewmode>included</viewmode>
+                       </oid-list>
+                     </view>
+                   </snmp-server>
+                   <segment-routing xmlns="http://tail-f.com/ned/cisco-ios-xr"/>
+                   <router xmlns="http://tail-f.com/ned/cisco-ios-xr">
+                     <isis>
+                       <tag>
+                         <name>{/name}</name>
+                         <net>
+                           <id>49.0001.0000.0000.000{$isis_id}.00</id>
+                         </net>
+                         <address-family>
+                           <ipv4>
+                             <unicast>
+                             <metric-style>wide</metric-style>
+                               <segment-routing>
+                                 <mpls/>
+                               </segment-routing>
+                               </unicast>
+                           </ipv4>
+                         </address-family>
+                         <interface>
+                           <name>GigabitEthernet{/deviceconfig/interface}</name>
+                           <circuit-type>level-2-only</circuit-type>
+                           <point-to-point/>
+                           <address-family>
+                             <ipv4>
+                               <unicast>
+                                 <fast-reroute>
+                                   <enable>
+                                     <per-prefix/>
+                                   </enable>
+                                 </fast-reroute>
+                               </unicast>
+                             </ipv4>
+                           </address-family>
+                         </interface>
+                         <interface>
+                           <name>Loopback{/deviceconfig/loopback}</name>
+                           <interface-type>passive</interface-type>
+                           <circuit-type>level-2-only</circuit-type>
+                           <address-family>
+                             <ipv4>
+                               <unicast>
+                                 <prefix-sid>
+                                   <index>{$isis_id}</index>
+                                 </prefix-sid>
+                               </unicast>
+                             </ipv4>
+                           </address-family>
+                         </interface>
+                       </tag>
+                     </isis>
+                   </router>
+                 </config>
+               </device>
+  </devices>
+</config-template>

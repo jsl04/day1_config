@@ -1,0 +1,102 @@
+module day1_config {
+
+  namespace "http://example.com/day1_config";
+  prefix day1_config;
+
+  import ietf-inet-types {
+    prefix inet;
+  }
+  import tailf-common {
+    prefix tailf;
+  }
+  import tailf-ncs {
+    prefix ncs;
+  }
+  import resource-allocator {
+    prefix ralloc;
+  }
+  import id-allocator {
+    prefix idalloc;
+  }
+  import tailf-ned-cisco-ios-xr {
+    prefix cisco-ios-xr;
+  }
+
+  description
+    "Bla bla...";
+
+  revision 2016-01-01 {
+    description
+      "Initial revision.";
+  }
+
+  list day1_config {
+    description "This is an RFS skeleton service";
+
+    key name;
+    leaf name {
+      tailf:cli-expose-key-name;
+      tailf:info "Unique service id";
+      tailf:cli-allow-range;
+      type string;
+    }
+
+    
+
+    leaf dns {
+      tailf:info "DNS server IP";
+      type inet:ipv4-address;
+    }
+    leaf ntp {
+      tailf:info "NTP server IP";
+      type inet:ipv4-address;
+    }
+    leaf id_pool {
+      tailf:info "ID pool to assign isis address and prefix SID";
+      type leafref {
+        path "/ralloc:resource-pools/idalloc:id-pool/idalloc:name";
+      }
+    }
+
+    // may replace this with other ways of refering to the devices.
+
+    list deviceconfig {
+      tailf:info "Day 1 config inputs for each device";
+      min-elements 1;
+      key device;
+    leaf device {
+      tailf:info "Device(s) to push Day 1 config to";
+      type leafref {
+        path "/ncs:devices/ncs:device/ncs:name";
+      }
+    }
+    leaf hostname {
+      tailf:info "Hostname for device(s)";
+      type string;
+    }
+    leaf loopback {
+      tailf:info "loopback interface number to config isis";
+      type leafref {
+        path "/ncs:devices/ncs:device[ncs:name=current()/../device]/ncs:config/cisco-ios-xr:interface/cisco-ios-xr:Loopback/cisco-ios-xr:id";
+      }
+    }
+    leaf interface {
+      tailf:info "interface number for point-to-point in isis";
+      type leafref {
+        path "/ncs:devices/ncs:device[ncs:name=current()/../device]/ncs:config/cisco-ios-xr:interface/cisco-ios-xr:GigabitEthernet/cisco-ios-xr:id";
+      }
+    }
+  uses ncs:service-data;
+  ncs:servicepoint day1_config-servicepoint;
+
+    
+    }
+  uses ncs:service-data;
+  ncs:servicepoint day1_config-servicepoint;
+
+    // replace with your own stuff here
+    
+    
+    
+  }
+}
